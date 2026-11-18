@@ -1,0 +1,7 @@
+regla,vecinos_mediana,vecinos_media,estabilidad,pasa_0.40,pasa_0.50,pasa_0.60
+prop0.15,4.0,5.05,0.7566891727133263,True,True,True
+abs5,5.0,5.0,0.7660307017543859,True,True,True
+prop0.25,6.0,7.6,0.7259433897510186,True,True,True
+abs8,8.0,8.0,0.7195614035087718,True,True,True
+prop0.40,10.0,12.1,0.6659247076023391,True,True,True
+abs12,12.0,12.0,0.6312786198674214,True,True,True

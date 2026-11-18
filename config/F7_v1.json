@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "replicas": 20000,
+  "confianza": 0.95,
+  "semilla_multinomial": 42,
+  "semilla_exponencial": 43,
+  "ddof_SE": 1,
+  "tolerancia_calculo": 1e-12,
+  "tolerancia_redondeo_6_decimales": 5e-7,
+  "tolerancia_SE_relativa": 1e-12,
+  "monte_carlo": "Dos mitades disjuntas. Se conserva el SE completo para aislar la variabilidad del cuantil.",
+  "configuraciones": ["principal", "abs5", "C0"],
+  "mecanismos": ["multinomial", "exponencial"],
+  "orden_documentos": "lexicográfico por identificador original, exportación mediante ID interno",
+  "alcance": "Aproximación condicional a la geometría fija y a la reponderación de los documentos observados."
+}

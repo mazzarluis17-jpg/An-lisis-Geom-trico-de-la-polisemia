@@ -1,0 +1,106 @@
+\section{Resultados}\label{sec:resultados}
+\subsection{Conservación en la ventana primaria}
+La \cref{tab:auc} resume los tres resultados primarios. UMAP obtuvo la mayor AUC de $R_{\mathrm{NX}}$. Las bandas simultáneas de PCA--UMAP e ISOMAP--UMAP excluyen cero y permanecen enteramente negativas en las \Num{robust2} combinaciones de configuración y mecanismo examinadas. En las \Num{omit2} omisiones individuales de documentos, ambas diferencias mantuvieron su dirección y su magnitud por encima del margen original. Las omisiones son análisis de influencia con puntuaciones fijas y el margen de la muestra completa. Las otras siete bandas principales incluyen cero. El valor crítico multinomial fue \Num{critical}.
+
+\begin{table}[!htbp]
+\centering
+\caption{AUC macro de la configuración principal. Se promedian los grupos por igual y se ponderan las escalas por $1/k$.}
+\label{tab:auc}
+\begin{tabular}{lrrr}
+\toprule
+Método & $R_{\mathrm{NX}}$ & $\Delta P_{\mathrm{aj}}$ & $S_{\mathrm{aj}}$\\
+\midrule
+PCA & \Num{macroPCARNX}&\Num{macroPCAdelta_aj}&\Num{macroPCAS_aj}\\
+ISOMAP &\Num{macroIsomapRNX}&\Num{macroIsomapdelta_aj}&\Num{macroIsomapS_aj}\\
+UMAP &\Num{macroUMAPRNX}&\Num{macroUMAPdelta_aj}&\Num{macroUMAPS_aj}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[!htbp]
+\centering
+\caption{Nueve contrastes principales y bandas simultáneas aproximadas al 95 por ciento. Son condicionales a la geometría, vecindarios y puntuaciones fijos, a la reponderación de los documentos observados y a los grupos y configuraciones seleccionados.}
+\label{tab:bandas}
+\small
+\begin{tabular}{llrrr}
+\toprule
+AUC & Contraste & Diferencia & Inferior & Superior\\
+\midrule
+$R_{\mathrm{NX}}$ & PCA -- ISOMAP & \Num{bandRNX1estimador} & \Num{bandRNX1inferior} & \Num{bandRNX1superior}\\
+ & PCA -- UMAP & \Num{bandRNX2estimador} & \Num{bandRNX2inferior} & \Num{bandRNX2superior}\\
+ & ISOMAP -- UMAP & \Num{bandRNX3estimador} & \Num{bandRNX3inferior} & \Num{bandRNX3superior}\\
+\addlinespace
+$\Delta P_{\mathrm{aj}}$ & PCA -- ISOMAP & \Num{banddelta_aj1estimador} & \Num{banddelta_aj1inferior} & \Num{banddelta_aj1superior}\\
+ & PCA -- UMAP & \Num{banddelta_aj2estimador} & \Num{banddelta_aj2inferior} & \Num{banddelta_aj2superior}\\
+ & ISOMAP -- UMAP & \Num{banddelta_aj3estimador} & \Num{banddelta_aj3inferior} & \Num{banddelta_aj3superior}\\
+\addlinespace
+$S_{\mathrm{aj}}$ & PCA -- ISOMAP & \Num{bandS_aj1estimador} & \Num{bandS_aj1inferior} & \Num{bandS_aj1superior}\\
+ & PCA -- UMAP & \Num{bandS_aj2estimador} & \Num{bandS_aj2inferior} & \Num{bandS_aj2superior}\\
+ & ISOMAP -- UMAP & \Num{bandS_aj3estimador} & \Num{bandS_aj3inferior} & \Num{bandS_aj3superior}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Dependencia de la escala}
+En la configuración principal, $k\leq3$ aporta aproximadamente el \Num{local1} por ciento de la diferencia neta de AUC de UMAP frente a PCA y el \Num{local2} por ciento frente a ISOMAP. Estos porcentajes dividen la contribución ponderada de $k\leq3$ por la diferencia ponderada total de $k=1,\ldots,9$ y conservan el signo de cada diferencia por escala. La ventaja descriptiva aparece en las \Num{positiveAUC_uniforme} reglas con AUC uniforme y en las \Num{positivek5} reglas a $k=5$. A $k=9$, \texttt{abs8}, \texttt{abs12} y \texttt{prop0.40} superan a ambos reductores. \texttt{prop0.25} supera solo a ISOMAP. \texttt{abs5} y \texttt{prop0.15} quedan por debajo de ambos. Las tablas~\ref{tab:escala} y~\ref{tab:nueve} muestran los valores. Estas comparaciones por escala son descriptivas.
+
+\begin{table}[!htbp]
+\centering
+\caption{Sensibilidad descriptiva de la conservación macro $R_{\mathrm{NX}}$ en la configuración principal. La AUC uniforme usa la misma ventana que la AUC primaria.}
+\label{tab:escala}
+\begin{tabular}{lrrr}
+\toprule
+Escala & PCA & ISOMAP & UMAP\\
+\midrule
+AUC uniforme &\Num{scaleAUC_uniformePCA}&\Num{scaleAUC_uniformeIsomap}&\Num{scaleAUC_uniformeUMAP}\\
+$k=5$ &\Num{scalek5PCA}&\Num{scalek5Isomap}&\Num{scalek5UMAP}\\
+$k=9$ &\Num{scalek9PCA}&\Num{scalek9Isomap}&\Num{scalek9UMAP}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{Conservación macro descriptiva a $k=9$ con las seis reglas de UMAP. PCA e ISOMAP \texttt{min+0} se mantienen fijos. El signo de cada diferencia indica el orden puntual.}
+\label{tab:nueve}
+\begin{tabular}{lrrrl}
+\toprule
+Regla & $R_{\mathrm{NX}}$ de UMAP & UMAP -- PCA & UMAP -- ISOMAP & Supera\\
+\midrule
+\texttt{abs5} & \Num{nine1Value} & \Num{nine1PCA} & \Num{nine1Iso} & \Num{nine1Class}\\
+\texttt{abs8} & \Num{nine2Value} & \Num{nine2PCA} & \Num{nine2Iso} & \Num{nine2Class}\\
+\texttt{abs12} & \Num{nine3Value} & \Num{nine3PCA} & \Num{nine3Iso} & \Num{nine3Class}\\
+\texttt{prop0.15} & \Num{nine4Value} & \Num{nine4PCA} & \Num{nine4Iso} & \Num{nine4Class}\\
+\texttt{prop0.25} & \Num{nine5Value} & \Num{nine5PCA} & \Num{nine5Iso} & \Num{nine5Class}\\
+\texttt{prop0.40} & \Num{nine6Value} & \Num{nine6PCA} & \Num{nine6Iso} & \Num{nine6Class}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Retención y geometría de PCA e ISOMAP}
+La proximidad de las AUC de PCA e ISOMAP se refiere a la retención respecto al original. Incluso con AUC similares, cada método puede retener identidades distintas. Al comparar directamente sus proyecciones se obtuvo una concordancia mediana \Num{isoAgreement} a $k=5$ y una disparidad mediana de Procrustes de \Num{isoProc}. La disparidad mide el residuo cuadrático después de centrar y alinear las coordenadas por escala y transformación ortogonal. El estiramiento geodésico en pares sin arista dio una mediana entre grupos de \Num{isoStretch}, y la correlación de Spearman entre distancias geodésicas y euclidianas tuvo mediana \Num{isoSpearman}. La retención promedio próxima coexiste con diferencias entre proyecciones y entre las distancias que usa ISOMAP y las euclidianas.
+
+El contraste de AUC $R_{\mathrm{NX}}$ PCA--ISOMAP cambia de \Num{bandRNX1estimador} con \texttt{min+0} a \Num{c0RnxEstimate} en C0 con $m=12$. El AUC de PCA permanece en \Num{c0AucPCA} y el de ISOMAP pasa de \Num{macroIsomapRNX} a \Num{c0AucIsomap}. La banda multinomial principal $[\Num{bandRNX1inferior},\Num{bandRNX1superior}]$ incluye cero. La banda C0 $[\Num{c0RnxLower},\Num{c0RnxUpper}]$ lo excluye. Ambas son aproximaciones simultáneas al 95 por ciento, condicionales a la geometría fija y a la reponderación de los documentos observados. Cada banda pertenece a su propia familia. Estos dos puntos describen sensibilidad a la configuración. La cercanía con \texttt{min+0} no establece equivalencia geométrica ni una relación monótona entre $m$ y la conservación.
+
+\subsection{Correspondencia semántica y sustituciones}
+UMAP presenta la AUC de $\Delta P_{\mathrm{aj}}$ menos negativa en la configuración principal (\Num{macroUMAPdelta_aj}, frente a \Num{macroPCAdelta_aj} para PCA y \Num{macroIsomapdelta_aj} para ISOMAP). Las bandas principales de los contrastes semánticos incluyen cero. Con \texttt{abs5}, la AUC de $\Delta P_{\mathrm{aj}}$ de UMAP es positiva (\Num{absDeltaAuc}) y las dos bandas de esa métrica frente a UMAP excluyen cero en esa sensibilidad. La ordenación de selectividad también varía con la escala. El estimador PCA--UMAP de $S_{\mathrm{aj}}$ cambia de signo con \texttt{abs5}. La \cref{fig:f7} reúne las familias de sensibilidad.
+
+La descomposición de las ecuaciones~\eqref{eq:delta} y~\eqref{eq:select} permite interpretar el cambio separando volumen y calidad. Las discrepancias empíricas entre ambas vías de cálculo de $\Delta P$ y $S$ fueron del orden de $10^{-16}$. La comprobación complementaria de $\sigma$ cubrió \Num{selectRows} registros, de los cuales \Num{selectActive} tenían sustituciones. En $k=5$ UMAP sustituye una fracción macro menor y presenta mayor $\sigma$ media en las dos agregaciones de la \cref{tab:sigma}. A igual selectividad por evento, una fracción menor de reemplazos produce un $S$ menor. Los valores del piloto permiten que cambien ambos factores.
+
+El caso de UMAP a $k=5$ ilustra la agregación de la calidad. La diferencia de pureza sin ajustar tiene macro \Num{umapFiveDelta}. El producto de la fracción media de sustituciones y de la diferencia media de pureza de entradas y salidas es \Num{umapFiveProduct}. La covarianza de ambas cantidades entre grupos es \Num{umapFiveCov}. Su suma da el cambio macro porque todos los grupos tienen sustituciones en esa escala.
+
+\begin{table}[!htbp]
+\centering
+\caption{Volumen y selectividad descriptivos en $k=5$ para la configuración principal. La media de $\sigma$ por grupo concede el mismo peso a cada grupo activo. La $\sigma$ por evento pondera por sustituciones. UMAP acumula las veinte semillas.}
+\label{tab:sigma}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+Método & $1-R$ macro & $S$ macro & $\sigma$ por grupo & $\sigma$ por evento & Eventos / oportunidades\\
+\midrule
+PCA &\Num{subPCAfraccion_macro}&\Num{subPCAS_macro}&\Num{subPCAsigma_macro_activos}&\Num{subPCAsigma_agrupada_eventos}&\Num{subPCAeventos} / \Num{subPCAoportunidades}\\
+ISOMAP &\Num{subIsomapfraccion_macro}&\Num{subIsomapS_macro}&\Num{subIsomapsigma_macro_activos}&\Num{subIsomapsigma_agrupada_eventos}&\Num{subIsomapeventos} / \Num{subIsomapoportunidades}\\
+UMAP &\Num{subUMAPfraccion_macro}&\Num{subUMAPS_macro}&\Num{subUMAPsigma_macro_activos}&\Num{subUMAPsigma_agrupada_eventos}&\Num{subUMAPeventos} / \Num{subUMAPoportunidades}\\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,83 @@
+\section{Fundamentos y trabajos relacionados}
+\subsection{Polisemia y representaciones contextuales}
+La polisemia se operacionaliza aquí como la coexistencia de varios sentidos anotados para un mismo lema y categoría gramatical. WordNet organiza unidades léxicas en conjuntos de sinónimos o \emph{synsets}, enlazados por relaciones semánticas \parencite{miller1995}. Una clave léxica identifica una entrada de sentido; un synset puede contener entradas de distintos lemas. Por ello, contar claves y contar synsets son operaciones diferentes.
+
+Una representación estática asigna un vector al tipo léxico. Una contextual asigna $x_i=f_\theta(c_i,t_i)$ a la ocurrencia $i$, donde $c_i$ es el contexto y $t_i$ la posición objetivo. BERT produce estados mediante un encoder Transformer bidireccional \parencite{devlin2019}. Una misma forma puede recibir estados diferentes según su contexto. No obstante, ni las coordenadas individuales ni sus agrupaciones tienen una interpretación léxica impuesta por construcción. En este estudio, los parámetros $\theta$ permanecen fijos: se evalúan representaciones preentrenadas, sin aprendizaje supervisado con las etiquetas del piloto.
+
+\subsection{Espacios vectoriales y geometría de embeddings}
+Sea $g$ un grupo lema–POS con $n_g$ ocurrencias. Su matriz cruda es $X_g\in\R^{n_g\times d}$, con $d=\Num{d}$ y fila $x_i^\top$. El producto interno y la norma euclidiana son
+\begin{equation}
+ \langle x_i,x_j\rangle=\sum_{\ell=1}^{d}x_{i\ell}x_{j\ell},
+ \qquad \|x_i\|_2=\sqrt{\langle x_i,x_i\rangle}.
+\end{equation}
+El primero combina magnitud y orientación; la segunda mide distancia al origen. La distancia euclidiana $d_E(x_i,x_j)=\|x_i-x_j\|_2$ mide separación entre puntos y satisface la desigualdad triangular. La similitud coseno, definida para vectores no nulos, es
+\begin{equation}
+ s_{ij}=\frac{\langle x_i,x_j\rangle}{\|x_i\|_2\|x_j\|_2},
+ \qquad d_{\cos}(x_i,x_j)=1-s_{ij}.
+\end{equation}
+Una similitud mayor indica mayor alineación; una distancia menor indica proximidad. Aunque se denomine habitualmente distancia coseno, $d_{\cos}$ es una disimilitud que puede incumplir la desigualdad triangular.
+
+Definimos $u_i=x_i/\|x_i\|_2$ y la matriz unitaria $U_g\in\R^{n_g\times d}$. Al expandir el cuadrado de la norma se obtiene
+\begin{equation}\label{eq:unitarios}
+ \|u_i-u_j\|_2^2=\|u_i\|_2^2+\|u_j\|_2^2-2\langle u_i,u_j\rangle
+ =2(1-s_{ij}).
+\end{equation}
+Así, euclidiana en unitarios y disimilitud coseno inducen el mismo orden de vecinos en aritmética exacta. La normalización elimina diferencias radiales; no centra las coordenadas ni elimina necesariamente anisotropía. La equivalencia de órdenes tampoco iguala sumas de pesos de caminos: aplicar una transformación monótona a cada arista puede modificar cuál camino tiene menor costo.
+
+Denotamos por $N_k^U(i)$ los $k$ índices distintos de $i$ con menor distancia a $u_i$ dentro de $g$. Esta relación es dirigida: $j\in N_k^U(i)$ no obliga a $i\in N_k^U(j)$. Un grafo simétrico por unión conserva una arista si existe en cualquiera de las direcciones; uno de vecinos mutuos exige ambas. Ambas reglas alteran grados y componentes. La geometría local alude a relaciones entre vecinos; la global incluye separaciones y recorridos entre regiones distantes. Una métrica local favorable no certifica fidelidad global.
+
+\subsection{El problema de reducción dimensional}
+Para una matriz de entrada $A\in\R^{n\times d}$, se busca una representación $Z\in\R^{n\times q}$ con $q\ll d$. En la notación habitual, $X\mapsto Z$ resume este problema; en el experimento la entrada efectiva será $A=U_g$ y $q=2$. Una transformación lineal proyecta sobre direcciones comunes; una no lineal puede deformar la nube de forma dependiente de las relaciones entre observaciones. No existe una única noción de información preservada: varianza, distancias y vecindades son criterios diferentes.
+
+Además, $n_g\ll d$ en este piloto. El rango de una matriz centrada no excede $n_g-1$, pero ese límite algebraico no implica que dos coordenadas basten para representar su geometría. La dimensión de visualización se fija por interpretabilidad gráfica, sin estimar dimensión intrínseca.
+
+\subsection{Análisis de Componentes Principales}
+Sea $\mu=n^{-1}\sum_i a_i$ la media de las filas de $A$ y $A_c=A-\ind\mu^\top$ la matriz centrada, con $\ind\in\R^n$ un vector de unos. Su covarianza muestral es
+\begin{equation}
+ C=\frac{A_c^\top A_c}{n-1}\in\R^{d\times d},
+ \qquad Cv_\ell=\lambda_\ell v_\ell,
+ \quad \lambda_1\geq\cdots\geq\lambda_d\geq0.
+\end{equation}
+Como $C$ es simétrica semidefinida positiva, admite autovectores ortonormales. Si $V_q=[v_1,\ldots,v_q]\in\R^{d\times q}$, PCA define $Z=A_cV_q$. Geométricamente, aproxima los datos por un subespacio afín y maximiza la varianza proyectada. Esta idea de ajuste por mínimos cuadrados tiene su antecedente en \textcite{pearson1901}.
+
+La relación con la reconstrucción se expresa mediante
+\begin{equation}
+ \min_{V^\top V=I_q}\|A_c-A_cVV^\top\|_F^2,
+ \qquad
+ \eta_q=\frac{\sum_{\ell=1}^{q}\lambda_\ell}{\sum_{\ell=1}^{d}\lambda_\ell}.
+\end{equation}
+La norma de Frobenius suma los errores cuadrados de todas las entradas; $\eta_q$ es la proporción de varianza explicada, si la varianza total es positiva. En la implementación se usa la descomposición $A_c=L\Sigma V^\top$, equivalente a la descomposición espectral anterior porque $\lambda_\ell=\sigma_\ell^2/(n-1)$. No se necesita construir explícitamente $C$. El criterio de reconstrucción no optimiza coincidencia de vecinos ni homogeneidad WordNet.
+
+\subsection{ISOMAP: grafos y distancias intrínsecas}
+ISOMAP combina proximidad local y escalamiento multidimensional clásico \parencite{tenenbaum2000}. Su motivación es que puntos próximos sobre una variedad suave pueden conectarse mediante segmentos locales que aproximen recorridos intrínsecos. La hipótesis exige muestreo y escala adecuados; no se verifica por producir una figura continua.
+
+Se construye un grafo de $m$ vecinos con costos euclidianos. Para nodos $i,j$, la distancia de caminos mínimos es
+\begin{equation}
+ \delta_G(i,j)=\min_{\pi:i\to j}\sum_{(a,b)\in\pi}d_E(u_a,u_b).
+\end{equation}
+El mínimo recorre caminos del grafo, y cada peso es una distancia, no una similitud. Si no existe camino, el valor es infinito. La conectividad es necesaria para disponer de una matriz finita de distancias entre todos los puntos; no basta para asegurar una aproximación geodésica correcta. Un grafo demasiado denso puede introducir atajos entre regiones.
+
+Con $D_G=(\delta_G(i,j))$ y $H=I_n-\ind\ind^\top/n$, se forma
+\begin{equation}
+ B=-\tfrac12 H D_G^{\circ2}H.
+\end{equation}
+El símbolo $\circ2$ indica cuadrado entrada a entrada. El doble centrado transforma distancias euclidianas cuadradas en una matriz de Gram. Si $D_G$ no es exactamente euclidiana, $B$ puede tener autovalores negativos; las coordenadas clásicas se construyen con direcciones principales de autovalores positivos, $Z=E_q\Lambda_q^{1/2}$. Esta exposición describe el principio espectral y no afirma que las distancias del piloto definan una variedad o una incrustación isométrica.
+
+\subsection{UMAP: relaciones locales ponderadas}
+UMAP construye una representación difusa de proximidad y ajusta coordenadas de baja dimensión \parencite{mcinnes2018}. En su descripción local, una arista dirigida puede recibir el peso
+\begin{equation}
+ p_{j|i}=\exp\!\left[-\frac{\max(0,d_E(a_i,a_j)-\rho_i)}{\sigma_i}\right],
+ \qquad p_{ij}=p_{j|i}+p_{i|j}-p_{j|i}p_{i|j}.
+\end{equation}
+Los parámetros locales $\rho_i$ y $\sigma_i>0$ adaptan conectividad y escala; se consideran los vecinos seleccionados, con peso cero fuera del soporte dirigido. La unión difusa simetriza las relaciones. En el plano se emplea una afinidad de la forma $v_{ij}=(1+a\|z_i-z_j\|_2^{2b})^{-1}$, con $a,b>0$ determinados por la curva de baja dimensión.
+
+La discrepancia conceptual entre ambas relaciones se expresa como entropía cruzada binaria, salvo términos constantes:
+\begin{equation}
+ \mathcal L(Z)=-\sum_{i<j}\bigl[p_{ij}\log v_{ij}+(1-p_{ij})\log(1-v_{ij})\bigr].
+\end{equation}
+Esta expresión explica atracción y repulsión; el código de UMAP realiza optimización estocástica con muestreo de aristas y ejemplos negativos, por lo que no debe interpretarse como evaluación exhaustiva de esa suma en cada iteración. El parámetro \texttt{min\_dist} controla la curva de afinidad, sin imponer una distancia mínima rígida entre puntos.
+
+En ISOMAP, $m$ determina el grafo cuyos caminos proporcionan distancias. En UMAP, \texttt{n\_neighbors} determina la escala usada para estimar relaciones locales. Dar a ambos el valor 12 no los vuelve equivalentes ni transfiere una justificación de conectividad de uno al otro.
+
+\subsection{Conservación geométrica y correspondencia semántica}
+La coincidencia de vecinos evalúa identidades compartidas; trustworthiness pondera la gravedad de los vecinos introducidos mediante sus rangos originales \parencite{venna2001}. La pureza agrega coincidencias de etiquetas y puede permanecer igual aunque cambien todas las identidades de los vecinos. Su diferencia respecto al espacio original mide un cambio semántico local, no una distancia entre geometrías. La metodología formaliza estas cantidades sobre un mismo universo de candidatos para hacerlas comparables sin confundir sus objetivos.

@@ -1,0 +1,50 @@
+\section{Continuidad con la configuración histórica}\label{ap:c0}
+C0 utiliza ISOMAP con \Num{isoC} vecinos y UMAP con \Num{umapC} vecinos y semilla \Num{seedC}. Como antecedente descriptivo, a $k=10$ las purezas macro históricas fueron \Num{historicalPIsomap} para ISOMAP y \Num{historicalPUMAP} para UMAP. La tabla original informó una diferencia ISOMAP--UMAP de \Num{c0Delta} y un $p$ ajustado por Holm de \Num{c0Holm} \parencite{pratt1959,holm1979}. Esa comparación correspondía a un tamaño de vecindad, una configuración y un diseño de análisis históricos. La inferencia principal de este manuscrito utiliza AUC y reponderación documental. Las permutaciones por bloques de oración de C0 se cotejaron con su distribución guardada. Su media nula difiere en general de la referencia uniforme de pureza.
+
+\begin{table}[!htbp]
+\centering
+\caption{Métricas descriptivas del control histórico C0 a $k=5$. La pureza de referencia de los embeddings originales fue \Num{c0Original}.}
+\label{tab:c0}
+\begin{tabular}{lrrr}
+\toprule
+Método & $R$ & Trustworthiness & Pureza\\
+\midrule
+PCA & \Num{c0PCAR} & \Num{c0PCAT} & \Num{c0PCAP}\\
+ISOMAP & \Num{c0IsomapR} & \Num{c0IsomapT} & \Num{c0IsomapP}\\
+UMAP & \Num{c0UMAPR} & \Num{c0UMAPT} & \Num{c0UMAPP}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\figura{F7_bandas_A4.pdf}{1.00}{Sensibilidad de las diferencias macro. Cada configuración y ley de pesos tiene una familia y calibración propias. Bandas simultáneas aproximadas al 95 por ciento, condicionales a la geometría, vecindarios y puntuaciones fijos, a los documentos observados y a los grupos y configuraciones seleccionados.}{fig:f7}
+
+\section{Configuraciones y reproducibilidad}\label{ap:config}
+La entrada de los tres métodos es float64, normalizada L2, con dos componentes de salida. PCA usa \texttt{svd\_solver=full} sin blanqueo. ISOMAP usa métrica euclidiana, unión simétrica, \texttt{path\_method=auto} y escalamiento clásico verificado contra scikit-learn. UMAP usa métrica euclidiana, inicialización espectral, \texttt{min\_dist=0.1}, \texttt{n\_jobs=1}, \texttt{compatibility\_layout=True} y semillas 42–61. C0 usó implícitamente la ruta heredada de UMAP. Los valores efectivos por grupo están en la \cref{tab:config}.
+
+\begin{table}[!htbp]
+\centering
+\caption{Tamaños de grupo y escalas efectivas de los reductores no lineales. La escala de evaluación $k$ se fija por separado.}
+\label{tab:config}
+\small
+\begin{tabular}{lrrr}
+\toprule
+Grupo & $n_g$ & $m_g$ de ISOMAP & Vecinos de UMAP\\
+\midrule
+\input{tables/F8_grupos}
+\end{tabular}
+\end{table}
+
+Los parámetros completos, incluidos los valores por defecto serializados, se encuentran en \nolinkurl{config/CP0_v1.json}, \nolinkurl{config/C0.json} y \nolinkurl{config/F3_definitiva_v1.json} del repositorio de revisión. El entorno de análisis registra NumPy \Num{numpy}, SciPy \Num{scipy}, scikit-learn \Num{sklearn} y umap-learn \Num{umapVersion}. Se preservan la matriz cruda, los IDs, los índices de proyección, las semillas, los pesos de documentos y los manifiestos SHA-256. Cada cifra generada se vincula con su fuente en \nolinkurl{F9_trazabilidad.csv}.
+
+\section{Agregación de la identidad de pureza}\label{ap:identidad}
+Sean $v_g=1-R_g$ y $d_g=P_{\mathrm{in},g}-P_{\mathrm{out},g}$. Si un grupo carece de sustituciones, contribuye cero al macro $\overline{\Delta P}$. Sea $p$ la fracción de grupos activos. Sobre esos grupos la covarianza poblacional satisface $\operatorname{Cov}(v,d)=\overline{vd}-\bar v\,\bar d$. Luego, si $p>0$,
+\[
+ \overline{\Delta P}=p\,\left[\bar v\,\bar d+\operatorname{Cov}(v,d)\right],
+\]
+donde las barras y la covarianza del corchete se refieren a los grupos activos. Si $p=0$, el macro vale cero. La igualdad aclara por qué el producto de dos medias macro puede diferir de la media de productos. El mismo principio de agrupación por eventos permite ponderar $\sigma$ por las sustituciones de cada grupo.
+
+Para $S_g=v_g\sigma_g$ se usa la misma identidad, sustituyendo $d_g$ por $\sigma_g$ en los grupos activos:
+\[
+ \overline S=p\,\left[\bar v\,\bar\sigma+\operatorname{Cov}(v,\sigma)\right].
+\]
+El macro de $S$ da el mismo peso a cada grupo y promedia los productos $v_g\sigma_g$, con contribución cero de los grupos inactivos. Para usar el producto de las medias de los grupos activos se debe agregar primero la covarianza y multiplicar el resultado por $p$. La selectividad agrupada por eventos es $\sum_g M_g\sigma_g/\sum_g M_g$, donde $M_g$ cuenta las sustituciones y los grupos inactivos contribuyen cero al numerador. Si $\sum_g M_g=0$, la selectividad agrupada queda indefinida y $\overline S=0$. El macro de $S_{\mathrm{aj}}$ usa el divisor $P_{\max,g}-\pi_g$ dentro de cada grupo antes de promediar.

@@ -1,0 +1,10 @@
+contraste,banda_principal_excluye_cero,fragilidad_inferencial,sensibilidades_incluyen_cero,fragilidad_direccional,configuraciones_signo_opuesto,reglas_signo_opuesto,omisiones_signo_opuesto,omisiones_bajo_margen,omisiones_fragilidad,alcance
+RNX:PCA-Isomap,False,False,principal/exponencial|abs5/multinomial|abs5/exponencial,False,,,2,222,222,Aproximación condicional a la geometría fija y a la reponderación de los documentos observados.
+RNX:PCA-UMAP,True,False,,False,,,0,0,0,Aproximación condicional a la geometría fija y a la reponderación de los documentos observados.
+RNX:Isomap-UMAP,True,False,,False,,,0,0,0,Aproximación condicional a la geometría fija y a la reponderación de los documentos observados.
+delta_aj:PCA-Isomap,False,False,principal/exponencial|abs5/multinomial|abs5/exponencial|C0/multinomial|C0/exponencial,False,,,72,222,222,Aproximación condicional a la geometría fija y a la reponderación de los documentos observados.
+delta_aj:PCA-UMAP,False,False,principal/exponencial,False,,,0,222,222,Aproximación condicional a la geometría fija y a la reponderación de los documentos observados.
+delta_aj:Isomap-UMAP,False,False,principal/exponencial|C0/multinomial|C0/exponencial,False,,,0,222,222,Aproximación condicional a la geometría fija y a la reponderación de los documentos observados.
+S_aj:PCA-Isomap,False,False,principal/exponencial|abs5/multinomial|abs5/exponencial|C0/multinomial,False,,,0,222,222,Aproximación condicional a la geometría fija y a la reponderación de los documentos observados.
+S_aj:PCA-UMAP,False,False,principal/exponencial|abs5/multinomial|abs5/exponencial|C0/multinomial|C0/exponencial,True,abs5|C0,abs12|abs5|abs8|prop0.25|prop0.40,0,222,222,Aproximación condicional a la geometría fija y a la reponderación de los documentos observados.
+S_aj:Isomap-UMAP,False,False,principal/exponencial|abs5/multinomial|abs5/exponencial|C0/multinomial|C0/exponencial,True,,abs12|abs8|prop0.25|prop0.40,0,222,222,Aproximación condicional a la geometría fija y a la reponderación de los documentos observados.

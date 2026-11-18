@@ -1,0 +1,120 @@
+{
+  "version": 1,
+  "estado": "aprobada_y_congelada",
+  "regla": "min+0",
+  "criterios": {
+    "densidad": 0.3,
+    "estabilidad": 0.5,
+    "estabilidad_mediana": 0.5676,
+    "grupos_en_limite": 19,
+    "cumple_060": false
+  },
+  "grupos": {
+    "answer#n": {
+      "n": 35,
+      "n_neighbors": 2
+    },
+    "back#r": {
+      "n": 48,
+      "n_neighbors": 2
+    },
+    "broad#a": {
+      "n": 23,
+      "n_neighbors": 4
+    },
+    "divide#v": {
+      "n": 23,
+      "n_neighbors": 4
+    },
+    "employ#v": {
+      "n": 24,
+      "n_neighbors": 3
+    },
+    "first#a": {
+      "n": 24,
+      "n_neighbors": 2
+    },
+    "first#r": {
+      "n": 24,
+      "n_neighbors": 4
+    },
+    "guide#v": {
+      "n": 20,
+      "n_neighbors": 2
+    },
+    "high#a": {
+      "n": 24,
+      "n_neighbors": 3
+    },
+    "however#r": {
+      "n": 35,
+      "n_neighbors": 4
+    },
+    "less#r": {
+      "n": 23,
+      "n_neighbors": 3
+    },
+    "military#a": {
+      "n": 23,
+      "n_neighbors": 2
+    },
+    "observe#v": {
+      "n": 35,
+      "n_neighbors": 3
+    },
+    "same#a": {
+      "n": 48,
+      "n_neighbors": 2
+    },
+    "situation#n": {
+      "n": 24,
+      "n_neighbors": 2
+    },
+    "structure#n": {
+      "n": 24,
+      "n_neighbors": 3
+    },
+    "table#n": {
+      "n": 24,
+      "n_neighbors": 12
+    },
+    "take#v": {
+      "n": 48,
+      "n_neighbors": 2
+    },
+    "thing#n": {
+      "n": 48,
+      "n_neighbors": 2
+    },
+    "together#r": {
+      "n": 24,
+      "n_neighbors": 2
+    }
+  },
+  "PCA": {
+    "copy": true,
+    "iterated_power": "auto",
+    "n_components": 2,
+    "n_oversamples": 10,
+    "power_iteration_normalizer": "auto",
+    "random_state": null,
+    "svd_solver": "full",
+    "tol": 0.0,
+    "whiten": false
+  },
+  "Isomap": {
+    "eigen_solver": "auto",
+    "max_iter": null,
+    "metric": "euclidean",
+    "metric_params": null,
+    "n_components": 2,
+    "n_jobs": null,
+    "neighbors_algorithm": "auto",
+    "p": 2,
+    "path_method": "auto",
+    "radius": null,
+    "tol": 0
+  },
+  "sensibilidad_c0": "config/C0.json",
+  "fuente_sha256": "06a402573f2fde148bdb90e30a320c9e0c223a33e64fd0c8dac4f8ab54f50ad8"
+}

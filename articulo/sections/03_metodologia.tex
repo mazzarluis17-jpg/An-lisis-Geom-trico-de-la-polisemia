@@ -1,0 +1,99 @@
+\section{Metodología experimental}
+\subsection{Corpus y selección de ocurrencias}
+Se utiliza SemCor, un corpus de concordancia semántica vinculado a WordNet \parencite{miller1993}, con etiquetas resueltas mediante WordNet 3.0. La selección parte directamente de las estructuras del corpus, conservando documento, oración y posición de la palabra. No utiliza el texto normalizado ni los POS predichos por analizadores externos.
+
+Son elegibles las anotaciones con lema WordNet resuelto, objetivo de una sola palabra completamente alfabética y lema sin guion bajo. Se agrupan por lema–POS, reuniendo adjetivos satélite con los adjetivos. Se requieren al menos dos sentidos con diez ocurrencias elegibles cada uno. Por POS se ordenan los candidatos por número de sentidos elegibles y hash SHA-256 del grupo, y se eligen cinco posiciones equiespaciadas mediante \texttt{linspace}. Se toman hasta cuatro sentidos por frecuencia descendente, con desempate por nombre de synset, y hasta doce ocurrencias por sentido, ordenadas por SHA-256 de la concatenación de \texttt{2026} y su identificador. Finalmente se ordenan los identificadores lexicográficamente.
+
+La selección determinista e informada por las etiquetas favorece los sentidos frecuentes. Los identificadores codifican documento, oración e intervalo semiabierto del objetivo en los tokens originales, con índices desde cero. La unidad contextual es la ocurrencia y la unidad de agregación principal es el grupo lema–POS. Se estudian exclusivamente las \Num{n} ocurrencias del piloto, distribuidas en \Num{groups} grupos, \Num{lemmas} lemas y \Num{synsets} synsets distintos.
+
+\subsection{Construcción y alineación de embeddings}
+Se emplea BERT Base Uncased (\texttt{google-bert/bert-base-uncased}) con \texttt{BertTokenizerFast}. Se conserva la revisión
+\begin{center}\small\texttt{86b5e0934494bd15c9632b12f734a8a67f723594}.\end{center} La ventana contiene la palabra objetivo y hasta veinte palabras a cada lado. Si supera 192 subpalabras, incluidos tokens especiales, se reduce el borde más lejano. Se preservan la puntuación y las unidades de contexto de SemCor. La tokenización recibe palabras presegmentadas y \texttt{word\_ids()} identifica las piezas de la posición objetivo, incluso cuando la misma forma aparece varias veces.
+
+Si $S_i$ es el conjunto de posiciones de subpalabra de la ocurrencia y $h_{it}\in\R^{\Num{d}}$ su estado en la última salida del encoder, el vector conservado es
+\begin{equation}
+ x_i=\frac{1}{|S_i|}\sum_{t\in S_i}h_{it}.
+\end{equation}
+Se promedian únicamente las piezas de la ocurrencia objetivo. La extracción registrada emplea evaluación e inferencia sin gradientes, CPU, lotes de cuatro, dos hilos y precisión float32. La semilla registrada para extracción es 2026.
+
+Se verifica la integridad de la matriz cruda y se coteja el orden con \texttt{common.csv}, \texttt{rows\_bert.csv}, \texttt{muestra.json} y \texttt{alignment\_bert.json}, mediante sus identificadores. La auditoría previa contrastó ventanas, objetivos y anotaciones con recursos locales; esta investigación verifica los artefactos conservados, sin repetir la inferencia neuronal. Esa distinción limita la certificación de reproducibilidad histórica desde los pesos.
+
+\subsection{Espacio de referencia y candidatos}
+Para cada grupo se convierte una copia de los vectores a float64 y se normaliza por fila, obteniendo $U_g$. La referencia es el conjunto de filas unitarias con distancia euclidiana. Sus vecinos coinciden en aritmética exacta con los del coseno original por la \cref{eq:unitarios}. Se excluye la diagonal y se ordenan las distancias mediante un ordenamiento estable; un empate conserva el orden de las filas. Ningún vecino procede de otro grupo. No se centra el espacio de referencia: el centrado posterior de PCA pertenece a ese reductor.
+
+Las coordenadas reducidas $Z_g^{M}\in\R^{n_g\times2}$, para $M\in\{\mathrm{PCA},\mathrm{ISOMAP},\mathrm{UMAP}\}$, se evalúan con distancia euclidiana y sin normalización posterior. No se comparan coordenadas absolutas entre ajustes independientes.
+
+\subsection{Diagnóstico y selección de reductores}\label{sec:seleccion}
+PCA usa SVD completa. Para ISOMAP se construye un grafo dirigido de $m$ vecinos y se simetriza por unión. La densidad efectiva $\delta_E=2|E|/[n_g(n_g-1)]$ cuenta aristas no dirigidas. Su cota inferior $m/(n_g-1)$ corresponde a la fracción dirigida por fila. Se diagnosticaron componentes, distancias de caminos mínimos, estiramiento $\delta_G/d_E$ en pares sin arista y discrepancias con PCA. Para un grafo completo, la desigualdad triangular hace que $\delta_G=d_E$. En ese caso el escalamiento clásico recupera las coordenadas de PCA salvo una transformación ortogonal, con la salvedad de posibles empates en el subespacio dominante.
+
+La rejilla de ISOMAP aplicó el piso de conectividad a mínimos individuales, sus incrementos y valores absolutos o proporcionales, deduplicando valores efectivos por grupo. Una regla debía mantener $\delta_E\leq0.30$ en al menos 18 grupos y alcanzar mediana de estabilidad $0.50$. Para cada escala se tomó la menor concordancia $R_{\mathrm{NX}}$ a $k=5$ con las proyecciones de escalas adyacentes disponibles. La regla admisible de menor densidad mediana fue \texttt{min+0}, con $m_g=m_g^{\min}$. Su densidad mediana fue \Num{isoDensity}, frente a \Num{isoDenseC} de $m=12$, y cumplió el criterio de densidad en \Num{isoFits} grupos. La estabilidad mediana fue \Num{isoStability}. La \cref{tab:cp0} muestra la sensibilidad a los umbrales operativos. Se conservó \grupo{table\#n}, que requiere \Num{isoTable} vecinos para conectar sus dos componentes previas. La \cref{fig:densidad} muestra el diagnóstico de densidad.
+
+\figura{01_densidad.pdf}{0.88}{Densidad efectiva de los grafos simetrizados por unión. Cada curva representa un grupo y se destaca \grupo{table\#n}. La línea horizontal indica el umbral operativo de referencia.}{fig:densidad}
+
+\begin{table}[!htbp]
+\centering
+\caption{Sensibilidad de CP0. Cada celda muestra la regla admisible de menor densidad efectiva mediana bajo la atribución principal de estabilidad entre escalas adyacentes.}
+\label{tab:cp0}
+\begin{tabular}{lccc}
+\toprule
+$\rho_G$ & $\tau_s=0.40$ & $\tau_s=0.50$ & $\tau_s=0.60$\\
+\midrule
+$0.25$ & \Num{cpCell11} & \Num{cpCell12} & \Num{cpCell13}\\
+$0.30$ & \Num{cpCell21} & \Num{cpCell22} & \Num{cpCell23}\\
+$0.35$ & \Num{cpCell31} & \Num{cpCell32} & \Num{cpCell33}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\texttt{min+0} se selecciona en los tres límites de densidad cuando $\tau_s$ vale $0.40$ o $0.50$. Con $\tau_s=0.60$, ninguna regla resulta admisible bajo la atribución principal. La selección es sensible al requisito de estabilidad.
+
+UMAP se evaluó en una rejilla propia de escalas absolutas y proporcionales con semillas 42–61. Para cada grupo se promedió la concordancia $R_{\mathrm{NX}}$ a $k=5$ sobre pares de semillas a escala fija y luego se tomó la mediana entre grupos. Las \Num{umapPass060} reglas superaron incluso $\tau_s=0.60$, con un mínimo de \Num{umapMinStability}. El filtro de estabilidad no discriminó entre ellas. La elección dependió de la convención registrada, que ordenó por mediana de vecinos efectivos, luego por media y orden de declaración. \texttt{prop0.15}, con $m_g^{\mathrm{UMAP}}=\lceil0.15(n_g-1)\rceil$, tuvo mediana \Num{propMedian} de vecinos efectivos y estabilidad \Num{propStability}. \texttt{abs5} tuvo mediana \Num{absMedian} y estabilidad \Num{absStability}. Ordenar por media primero habría elegido \texttt{abs5}, con media \Num{absMean} frente a \Num{propMean} de \texttt{prop0.15}. Se conserva \texttt{abs5} como sensibilidad. El procedimiento usó concordancia geométrica y tamaños efectivos con exclusión de etiquetas, pureza y medidas de fidelidad al original.
+
+En ISOMAP la estabilidad mide el efecto de cambiar la escala del grafo. En UMAP mide variación entre semillas a una misma escala. La métrica de concordancia es común, pero los niveles absolutos responden a perturbaciones distintas. El apéndice~\ref{ap:config} especifica los parámetros efectivos.
+
+\subsection{Conservación y pureza ajustadas por azar}
+Para el grupo $g$ y la proyección $Z$, la conservación y su ajuste son
+\begin{equation}\label{eq:rnx}
+ R=\frac{1}{n_g k}\sum_i |N_k^U(i)\cap N_k^Z(i)|,
+ \qquad R_{\mathrm{NX}}=\frac{R-c_g}{1-c_g},
+ \qquad c_g=\frac{k}{n_g-1}.
+\end{equation}
+El ajuste se define para $k<n_g-1$ y tiene esperanza cero para una selección uniforme de vecinos independiente de $N_k^U(i)$. El mismo cálculo entre dos proyecciones mide su concordancia. Trustworthiness se conserva como diagnóstico secundario y se calcula cuando $k<n_g/2$. Penaliza los vecinos nuevos en función del exceso de rango original sobre $k$.
+
+Para $A$ igual a $U$ o $Z$, la pureza es $P^A=(n_g k)^{-1}\sum_i\sum_{j\in N_k^A(i)}\ind(y_i=y_j)$ y $\Delta P=P^Z-P^U$. Si $n_{g,s}$ es la frecuencia del synset $s$, se usa
+\[
+ \pi_g=\frac{\sum_s n_{g,s}(n_{g,s}-1)}{n_g(n_g-1)},\quad
+ P_{\max}=\frac{1}{n_g k}\sum_i\min\{k,n_{g,y_i}-1\},\quad
+ P_{\mathrm{aj}}^A=\frac{P^A-\pi_g}{P_{\max}-\pi_g}.
+\]
+El macro de $\pi_g$ es \Num{pi}. La referencia es analítica, uniforme y sin autoelección. Las permutaciones históricas entre bloques de oración del mismo tamaño corresponden a otro nulo. Dentro del grupo, $\Delta P_{\mathrm{aj}}=\Delta P/(P_{\max}-\pi_g)$. En la ventana primaria $k=1,\ldots,9$, la composición de la muestra permite $P_{\max}=1$.
+
+\subsection{Volumen y calidad de las sustituciones}\label{sec:descomposicion}
+Para cada $i$, sean $K_i=N^U_k(i)\cap N^Z_k(i)$ los vecinos retenidos, $I_i=N^Z_k(i)\mathbin{\backslash} N^U_k(i)$ los introducidos y $O_i=N^U_k(i)\mathbin{\backslash} N^Z_k(i)$ los eliminados. Los dos últimos conjuntos tienen tamaño $m_i=k-|K_i|$. Sea $a_i^{\mathrm{in}}$ el número de coincidencias de synset en $I_i$ y $a_i^{\mathrm{out}}$ el correspondiente en $O_i$. Si $M=\sum_i m_i>0$, sus purezas agrupadas son $P_{\mathrm{in}}=M^{-1}\sum_i a_i^{\mathrm{in}}$ y $P_{\mathrm{out}}=M^{-1}\sum_i a_i^{\mathrm{out}}$. Por cancelación de los retenidos,
+\begin{equation}\label{eq:delta}
+ \Delta P=\frac{\sum_i(a_i^{\mathrm{in}}-a_i^{\mathrm{out}})}{n_g k}
+ =\frac{M}{n_g k}(P_{\mathrm{in}}-P_{\mathrm{out}})
+ =(1-R)(P_{\mathrm{in}}-P_{\mathrm{out}}).
+\end{equation}
+En UMAP se reúnen eventos de las semillas antes de formar cocientes y el denominador $n_g k$ se multiplica por el número de semillas. Si $M=0$, el cambio es cero y las proporciones condicionadas a la sustitución quedan indefinidas.
+
+La referencia ciega a la geometría retira uniformemente $m_i$ vecinos originales e introduce $m_i$ candidatos uniformes de su complemento sin autoenlace. Si $a_i^U$ cuenta coincidencias de synset entre los vecinos originales, sus esperanzas por evento son $p_i^U=a_i^U/k$ para las salidas y $q_i=(n_{g,y_i}-1-a_i^U)/(n_g-1-k)$ para las entradas. Por linealidad, el cambio esperado por ocurrencia es $(m_i/k)(q_i-p_i^U)$. La selectividad $S$ resta a $\Delta P$ el promedio de esa referencia. Con $\bar q$ y $\bar p^U$ ponderadas por $m_i$, se obtiene
+\begin{equation}\label{eq:select}
+ S=(1-R)\sigma,\qquad
+ \sigma=(P_{\mathrm{in}}-\bar q)-(P_{\mathrm{out}}-\bar p^U)
+       =\frac{S}{1-R}\quad (R<1).
+\end{equation}
+Se usa $S_{\mathrm{aj}}=S/(P_{\max}-\pi_g)$ para la comparación primaria. La media de $\sigma$ pondera por igual a los grupos activos. La media agrupada por eventos pondera por el número $M$ de sustituciones de cada grupo. El macro de $S$ es una media de productos, con contribución cero de los grupos inactivos. El apéndice~\ref{ap:identidad} detalla la agregación macro.
+
+\subsection{Estimando y reponderación documental}\label{sec:infer}
+Para $X\in\{R_{\mathrm{NX}},\Delta P_{\mathrm{aj}},S_{\mathrm{aj}}\}$ resumimos la ventana primaria mediante la media discreta $\operatorname{AUC}(X)=\sum_{k=1}^9 X_k/k\,/\,\sum_{k=1}^9 1/k$. UMAP se promedió por ocurrencia sobre las veinte semillas. Se calcularon diferencias pareadas de AUC por ocurrencia, medias dentro del grupo y un macro de igual peso para los \Num{groups} grupos. La familia primaria cruza las tres métricas con los pares PCA--ISOMAP, PCA--UMAP e ISOMAP--UMAP.
+
+Los \Num{docs} documentos incluyen \Num{sharedDocs} que aportan datos a más de un grupo. En cada extracción se muestrearon conjuntamente los documentos y se usó el mismo vector de conteos para los grupos y contrastes. Dentro de cada grupo se dividió la suma ponderada por el peso total y luego se calculó el macro. Se aceptaron \Num{accepted} réplicas multinomiales con semilla 42 y se descartó \Num{rejected} extracción por pérdida de cobertura de un grupo. Las puntuaciones y constantes permanecieron fijas. El procedimiento usa remuestreo \parencite{efron1979} para examinar la sensibilidad del macro a esa reponderación.
+
+Para el contraste $j$, el error estándar $s_j$ es la desviación estándar muestral de sus réplicas. Se ordenaron los máximos
+\[
+ T_b=\max_j\big|(\hat\theta_{jb}^{*}-\hat\theta_j)/s_j\big|
+\]
+y se tomó el estadístico de orden $19000$ como $c_{.95}$ para la banda simultánea de un paso $\hat\theta_j\pm c_{.95}s_j$. Esta calibración usa una escala fija por contraste. Los pesos positivos exponenciales con semilla 43, la condición histórica C0 y UMAP \texttt{abs5} forman sensibilidades. Cada combinación utiliza su propia familia y calibración, con pesos compartidos entre configuraciones bajo una misma ley.
+
+Las bandas son aproximaciones condicionales a la geometría, vecindarios y puntuaciones fijos, a los documentos observados, los grupos seleccionados y las configuraciones congeladas. La reponderación no incorpora reajuste de proyecciones ni la selección de la muestra.

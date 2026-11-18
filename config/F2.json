@@ -1,0 +1,14 @@
+{
+  "absolutos": [3, 5, 8, 10, 12],
+  "proporcionales": [0.10, 0.25, 0.40],
+  "incrementos_minimo": [0, 2, 4],
+  "densidades": [0.25, 0.30, 0.35],
+  "estabilidades": [0.40, 0.50, 0.60],
+  "grupos_minimos": 18,
+  "k_concordancia": 5,
+  "estabilidad_regla": "Por grupo, mínimo de las concordancias con los m inmediatamente adyacentes de la rejilla deduplicada. Macro de decisión: mediana de los 20 valores. Sensibilidad: lado inferior y superior, usando la única comparación disponible en los extremos.",
+  "densidad_referencia": 0.30,
+  "estabilidad_referencia": 0.50,
+  "tolerancia_distancias": 1e-9,
+  "tolerancia_procrustes_completo": 1e-8
+}

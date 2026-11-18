@@ -1,0 +1,10 @@
+k,comparacion,n_grupos,media_diferencia,mediana_diferencia,positivas,negativas,empates,W,p_original,p_Holm,significativo
+3,PCA vs Isomap,20,0.00062,-0.01419,8,11,1,91.5,0.62736,1.0,False
+3,PCA vs UMAP,20,-0.02474,-0.01171,5,11,4,59.0,0.12388,0.61938,False
+3,Isomap vs UMAP,20,-0.02536,-0.02778,6,12,2,63.5,0.13485,0.61938,False
+5,PCA vs Isomap,20,0.0076,0.00417,10,7,3,83.0,0.47705,1.0,False
+5,PCA vs UMAP,20,-0.02428,-0.02138,6,12,2,51.0,0.04978,0.29868,False
+5,Isomap vs UMAP,20,-0.03187,-0.025,6,13,1,37.0,0.01172,0.08206,False
+10,PCA vs Isomap,20,-0.00271,0.00494,11,7,2,101.0,0.89602,1.0,False
+10,PCA vs UMAP,20,-0.03549,-0.02188,5,13,2,32.0,0.00755,0.06039,False
+10,Isomap vs UMAP,20,-0.03278,-0.03732,3,17,0,29.5,0.00482,0.04337,True

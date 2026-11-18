@@ -1,0 +1,13 @@
+{
+  "documentos": 222,
+  "grupos": 20,
+  "documentos_por_grupo_min": 11,
+  "documentos_por_grupo_max": 43,
+  "grupo_min": "military#a",
+  "documentos_multigrupo": 138,
+  "pares_con_documentos_compartidos": 161,
+  "pares_totales": 190,
+  "max_documentos_compartidos": 10,
+  "max_prob_grupo_ausente": 1.2599251582827392e-05,
+  "cota_prob_algun_grupo_ausente": 1.2779863116852574e-05
+}

@@ -1,0 +1,45 @@
+\usepackage[spanish,es-nodecimaldot,es-tabla]{babel}
+\usepackage{fontspec,unicode-math}
+\setmainfont{TeX Gyre Pagella}
+\setsansfont{Lato}
+\setmonofont{Latin Modern Mono}[Scale=MatchLowercase]
+\setmathfont{TeX Gyre Pagella Math}
+\usepackage[a4paper,top=27mm,bottom=27mm,left=28mm,right=28mm,headheight=15pt]{geometry}
+\usepackage{microtype,graphicx,booktabs,tabularx,array}
+\microtypesetup{protrusion=false}
+\usepackage{amsmath}
+\usepackage{caption,flafter,needspace}
+\usepackage[section]{placeins}
+\captionsetup{font=small,labelfont=bf,justification=justified,skip=9pt}
+\usepackage{fancyhdr}
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{\sffamily\footnotesize Geometría de embeddings y polisemia}
+\fancyhead[R]{\sffamily\footnotesize Estudio piloto}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+\usepackage[backend=biber,style=apa,doi=true,isbn=false,url=true]{biblatex}
+\DeclareLanguageMapping{spanish}{spanish-apa}
+\setlength{\bibhang}{1.27cm}
+% Ajustes APA limitados a la bibliografía en español.
+\AtBeginBibliography{%
+  \renewcommand*{\finalandcomma}{\addcomma}%
+  \renewcommand*{\bibrangedash}{\textendash}%
+  \Urlmuskip=0mu\relax
+}
+\addbibresource{bibliography/referencias.bib}
+\usepackage{csquotes}
+\usepackage[hidelinks,unicode]{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\crefname{table}{tabla}{tablas}\crefname{figure}{figura}{figuras}\crefname{equation}{ecuación}{ecuaciones}
+\setlength{\parindent}{1.2em}\setlength{\parskip}{3pt}
+\linespread{1.07}
+\setlength{\emergencystretch}{2em}
+\widowpenalty=10000\clubpenalty=10000
+\setcounter{topnumber}{2}\setcounter{totalnumber}{3}
+\renewcommand{\topfraction}{.85}\renewcommand{\textfraction}{.12}
+\renewcommand{\floatpagefraction}{.70}
+\newcommand{\grupo}[1]{\texttt{#1}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\ind}{\mathbf{1}}
+\newcommand{\macro}[1]{\overline{#1}}
+\newcommand{\figura}[4]{\begin{figure}[!htbp]\centering\includegraphics[width=#2\linewidth]{figures/#1}\caption{#3}\label{#4}\end{figure}}

@@ -1,0 +1,18 @@
+# Inventario de análisis complementarios de F6
+
+Inventario retrospectivo del §8 de v1.0 y los controles solicitados. La evidencia procede de los archivos F0–F7 y del cierre descriptivo previo a F8. La clasificación se refiere a la configuración revisada, salvo la fila de continuidad histórica.
+
+| Análisis | Estado | Evidencia y alcance |
+| --- | --- | --- |
+| Componentes empíricos de varianza entre grupos y semillas dentro de grupo | **Ejecutado y validado** | `resultados/F4_varianzas_umap.csv`. Descomposición descriptiva por k y métrica en UMAP principal, con varianza poblacional en el conjunto de grupos y semillas y control aditivo en `src/f45.py`. |
+| Trustworthiness | **Ejecutado y validado** | `F1_T.csv`, `F4_grupo_semilla.csv`, `F4_macro.csv`, `F4_proporcional_grupos.csv`. Se impuso k<n/2. La continuidad histórica se verificó a k=3, 5. Los T proporcionales se consultan por φ. El macro por k informa cuántos grupos contribuyen. |
+| Jackknife completo por grupo | **No ejecutado** | Se hizo en este cierre una omisión focal de `military#a` a partir de los contrastes guardados, con puntuaciones fijas. `preF8_military_contrastes.csv`. La serie completa de 20 omisiones de grupo quedó sin ejecutar. Las 222 omisiones de F7 corresponden a documentos. |
+| Centrado global + L2 | **No ejecutado** | La entrada principal es L2 sobre vectores crudos. El centrado interno de PCA no equivale a un experimento con centrado global previo de la entrada. |
+| Centrado por grupo + L2 | **No ejecutado** | No se evaluó como variante de preprocesamiento comparativa. |
+| Eliminación de las siete componentes dominantes globales + L2 | **No ejecutado** | No hay proyecciones ni métricas para esa variante. |
+| Permutaciones por bloques de oración | **Ejecutado con limitaciones** | F1 reprodujo las 10 000 permutaciones del diseño histórico C0. Véanse `F1_nulos.npz`, el informe F1 y las salidas históricas. No se repitieron para la configuración principal congelada. |
+| Sensibilidad de configuraciones y escalas | **Ejecutado con limitaciones** | F2 cubrió la rejilla ISOMAP y umbrales. F3 cubrió la rejilla UMAP y 20 semillas. F7 cruzó principal, abs5 y C0 con dos leyes de pesos, y dejó estimadores puntuales para las seis escalas UMAP. Este cierre agrega k=1…9 y ambas AUC. La malla semántica factorial completa ISOMAP×UMAP prevista en el §8 no se ejecutó. |
+| Anisotropía | **Ejecutado con limitaciones** | El notebook geométrico histórico contiene normas y distribuciones de cosenos, y F2 registra CV y contraste relativo de distancias. No se ejecutó una sensibilidad formal del resultado a cambios de anisotropía. |
+| Layout alternativo de UMAP | **Ejecutado con limitaciones** | F1 contrastó `compatibility_layout=False` en dos grupos para verificar qué ruta reproducía el piloto. La rejilla y la inferencia usaron el layout heredado. |
+
+La pregunta principal sobre conservación y coincidencia semántica en esta muestra puede responderse con las métricas directas, la descomposición y la reponderación documental ejecutadas. Un jackknife completo por grupo sería pertinente para una afirmación de estabilidad frente a la composición de los grupos. Las variantes de centrado y eliminación de componentes serían pertinentes para atribuir resultados a la anisotropía. Una nueva prueba por bloques sería pertinente para una afirmación de asociación frente a ese nulo en la configuración revisada. Esas afirmaciones quedan fuera del cierre actual. Se deben declarar como limitaciones el alcance de las sensibilidades de preprocesamiento, la ausencia del jackknife completo por grupo y la falta de una malla factorial semántica completa.

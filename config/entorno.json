@@ -1,0 +1,30 @@
+{
+  "shape": [
+    601,
+    768
+  ],
+  "dtype": "float32",
+  "norm_min": 10.915647081161342,
+  "norm_max": 17.34951239765996,
+  "zero_norms": 0,
+  "nans": 0,
+  "infs": 0,
+  "documents": 222,
+  "sentences": 589,
+  "synsets": 50,
+  "group_synsets": 51,
+  "lemmas": 19,
+  "sha256": "1b2dca2930a1b3e0703f4a47ce1476bfc54f579966095c8b08f4b7900b9719fd",
+  "python": "3.11.2 (main, Apr 28 2025, 14:11:48) [GCC 12.2.0]",
+  "packages": {
+    "numpy": "2.4.2",
+    "scipy": "1.17.1",
+    "scikit-learn": "1.8.0",
+    "umap-learn": "0.6.0",
+    "pandas": "3.0.1",
+    "matplotlib": "3.10.8",
+    "numba": "0.68.1",
+    "nbformat": "5.10.4",
+    "nbclient": "0.10.4"
+  }
+}

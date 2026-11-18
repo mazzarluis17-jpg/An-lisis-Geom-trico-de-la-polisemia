@@ -1,0 +1,7 @@
+configuracion,mecanismo,cuantil,estadistico_orden,cuantil_mitad_1,cuantil_mitad_2,diferencia_abs,alcance
+principal,multinomial,2.7136646416896046,19000,2.7297876149573117,2.6985187152005246,0.03126889975678715,Aproximación condicional a la geometría fija y a la reponderación de los documentos observados.
+principal,exponencial,2.6948730508805023,19000,2.6988158092341257,2.6881260657964168,0.010689743437708898,Aproximación condicional a la geometría fija y a la reponderación de los documentos observados.
+abs5,multinomial,2.7044544970218203,19000,2.6934997834982797,2.712649857692232,0.019150074193952538,Aproximación condicional a la geometría fija y a la reponderación de los documentos observados.
+abs5,exponencial,2.6908157292877517,19000,2.696935559369137,2.687575186843482,0.009360372525655247,Aproximación condicional a la geometría fija y a la reponderación de los documentos observados.
+C0,multinomial,2.7107446207904013,19000,2.7265683009406154,2.692573248403952,0.03399505253666346,Aproximación condicional a la geometría fija y a la reponderación de los documentos observados.
+C0,exponencial,2.704887640919977,19000,2.7091726652198744,2.703436899812088,0.0057357654077865305,Aproximación condicional a la geometría fija y a la reponderación de los documentos observados.

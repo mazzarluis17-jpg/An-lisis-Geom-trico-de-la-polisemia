@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "absolutos": [5, 8, 12],
+  "proporcionales": [0.15, 0.25, 0.40],
+  "semillas": [42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61],
+  "k_concordancia": 5,
+  "umbral": 0.50,
+  "sensibilidad": [0.40, 0.50, 0.60],
+  "compatibility_layout": true,
+  "orden": "menor mediana de n_neighbors efectivo entre grupos, luego menor media, luego orden de declaración"
+}
